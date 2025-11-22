@@ -41,4 +41,10 @@ public class QuizServiceIml implements IQuizUseCase {
 
         return quizRepository.save(quiz);
     }
+
+    @Override
+    public List<Quiz> getAllQuizzesByCourse(Long courseId) {
+        log.info("Fetching all quizzes for course id: {}", courseId);
+        return quizRepository.findAllByCourseId(courseId);
+    }
 }

@@ -10,6 +10,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
@@ -22,5 +24,13 @@ public class QuizRepositoryAdapter implements QuizRepositoryPort {
         var quizEntity = quizMapper.toEntity(quiz);
         var savedEntity = jpaQuizRepository.save(quizEntity);
         return quizMapper.toDomain(savedEntity);
+    }
+
+    @Override
+    public List<Quiz> findAllByCourseId(Long courseId) {
+        var quizEntities = jpaQuizRepository.findAllByCourseId(courseId);
+        return quizEntities.stream()
+                .map(quizMapper::toDomain)
+                .toList();
     }
 }

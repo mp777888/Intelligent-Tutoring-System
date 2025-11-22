@@ -16,48 +16,63 @@ public class QuizMapper {
         this.courseMapper = courseMapper;
     }
 
-    public QuizResponse toResponse(Quiz quiz){
+    public QuizResponse toResponse(Quiz quiz) {
         return new QuizResponse(
                 quiz.getId(),
-                quiz.getCourse().getId(),
+                quiz.getCourse() != null ? quiz.getCourse().getId() : null,
                 quiz.getTitle(),
                 quiz.getDescription(),
-                quiz.getQuestions().stream()
-                        .map(questionMapper::toResponse)
-                        .toList(),
+                quiz.getQuestions() == null ? java.util.Collections.emptyList() :
+                        quiz.getQuestions().stream()
+                                .map(questionMapper::toResponse)
+                                .toList(),
                 quiz.getCreatedAt(),
                 quiz.getClosedAt()
         );
     }
 
-    public QuizEntity toEntity(Quiz quiz){
+    public QuizEntity toEntity(Quiz quiz) {
         return new QuizEntity(
                 quiz.getId(),
                 quiz.getTitle(),
                 quiz.getDescription(),
                 quiz.getCourse() == null ? null : courseMapper.toEntity(quiz.getCourse()),
                 quiz.getQuestions() == null ? java.util.Collections.emptyList() :
-                quiz.getQuestions().stream()
-                        .map(questionMapper::toEntity)
-                        .toList(),
+                        quiz.getQuestions().stream()
+                                .map(questionMapper::toEntity)
+                                .toList(),
                 quiz.getCreatedAt(),
                 quiz.getClosedAt()
         );
     }
 
-    public Quiz toDomain(QuizEntity quizEntity){
+    public Quiz toDomain(QuizEntity quizEntity) {
         return new Quiz(
                 quizEntity.getId(),
                 quizEntity.getTitle(),
                 quizEntity.getDescription(),
                 quizEntity.getCourse() == null ? null : courseMapper.toDomain(quizEntity.getCourse()),
-                quizEntity.getQuestions() == null ? java.util.Collections.emptyList() :
-                quizEntity.getQuestions().stream()
-                        .map(questionMapper::toDomain)
-                        .toList(),
+                quizEntity.getQuestions() == null ? new java.util.ArrayList<>() :
+                        quizEntity.getQuestions().stream()
+                                .map(questionMapper::toDomain)
+                                .toList(),
                 quizEntity.getCreatedAt(),
                 quizEntity.getClosedAt()
         );
     }
 
+    public Quiz toDomainWithoutCourse(QuizEntity quizEntity) {
+        return new Quiz(
+                quizEntity.getId(),
+                quizEntity.getTitle(),
+                quizEntity.getDescription(),
+                null,
+                quizEntity.getQuestions() == null ? new java.util.ArrayList<>() :
+                        quizEntity.getQuestions().stream()
+                                .map(questionMapper::toDomain)
+                                .toList(),
+                quizEntity.getCreatedAt(),
+                quizEntity.getClosedAt()
+        );
+    }
 }

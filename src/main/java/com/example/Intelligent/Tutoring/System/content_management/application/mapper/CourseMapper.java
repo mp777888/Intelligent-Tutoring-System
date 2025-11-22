@@ -4,12 +4,16 @@ import com.example.Intelligent.Tutoring.System.content_management.adapter.persis
 import com.example.Intelligent.Tutoring.System.content_management.application.dto.response.CourseResponse;
 import com.example.Intelligent.Tutoring.System.content_management.domain.model.Course;
 import lombok.AllArgsConstructor;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 @Component
-@AllArgsConstructor
 public class CourseMapper {
-    private QuizMapper quizMapper;
+    private final QuizMapper quizMapper;
+
+    public CourseMapper(@Lazy QuizMapper quizMapper) {
+        this.quizMapper = quizMapper;
+    }
 
     public CourseResponse toResponse(Course course) {
         return new CourseResponse(
@@ -26,10 +30,7 @@ public class CourseMapper {
                 course.getTitle(),
                 course.getDescription(),
                 course.getSubject(),
-                course.getQuizzes() == null ? java.util.Collections.emptyList() :
-                        course.getQuizzes().stream()
-                                .map(quizMapper::toEntity)
-                                .toList()
+                java.util.Collections.emptyList()
         );
     }
 
@@ -39,10 +40,10 @@ public class CourseMapper {
                 courseEntity.getTitle(),
                 courseEntity.getDescription(),
                 courseEntity.getSubject(),
-                courseEntity.getQuizzes() == null ? java.util.Collections.emptyList() :
-                    courseEntity.getQuizzes().stream()
-                            .map(quizMapper::toDomain)
-                            .toList()
+                courseEntity.getQuizzes() == null ? new java.util.ArrayList<>() :
+                        courseEntity.getQuizzes().stream()
+                                .map(quizMapper::toDomainWithoutCourse)
+                                .toList()
         );
     }
 }
