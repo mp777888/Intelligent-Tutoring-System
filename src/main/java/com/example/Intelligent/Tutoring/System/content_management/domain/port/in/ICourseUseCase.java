@@ -2,7 +2,7 @@ package com.example.Intelligent.Tutoring.System.content_management.domain.port.i
 
 import com.example.Intelligent.Tutoring.System.content_management.domain.model.Course;
 
-public interface CreateCourseUseCase {
+public interface ICourseUseCase {
     Course createCourse(CreateCourseCommand command);
     Course findCourseById(Long id);
     record CreateCourseCommand(String title, String description, String subject) {}

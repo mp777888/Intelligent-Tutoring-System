@@ -1,9 +1,10 @@
 package com.example.Intelligent.Tutoring.System.content_management.domain.model;
 
-import com.example.Intelligent.Tutoring.System.content_management.application.QuestionType;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -13,10 +14,13 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class Question {
+public class Quiz {
     Long id;
-    String content;
-    String correctAnswer;
-    List<String> options;
-    QuestionType type;
+    String title;
+    String description;
+    Course course;
+    @Builder.Default
+    List<Question> questions = new ArrayList<>();
+    LocalDateTime createdAt;
+    LocalDateTime closedAt;
 }

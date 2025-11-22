@@ -1,9 +1,10 @@
 package com.example.Intelligent.Tutoring.System.content_management.application.dto.response;
 
-import com.example.Intelligent.Tutoring.System.content_management.application.QuestionType;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Setter
@@ -12,10 +13,12 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class QuestionResponse {
+public class QuizResponse {
     Long id;
-    String content;
-    String correctAnswer;
-    List<String> options;
-    String type;
+    Long courseId;
+    String title;
+    String description;
+    List<QuestionResponse> questions;
+    LocalDateTime createdAt;
+    LocalDateTime closedAt;
 }

@@ -1,0 +1,26 @@
+package com.example.Intelligent.Tutoring.System.content_management.adapter.persistence;
+
+
+import com.example.Intelligent.Tutoring.System.content_management.adapter.jpa.JpaQuizRepository;
+import com.example.Intelligent.Tutoring.System.content_management.application.mapper.QuizMapper;
+import com.example.Intelligent.Tutoring.System.content_management.domain.model.Quiz;
+import com.example.Intelligent.Tutoring.System.content_management.domain.port.out.QuizRepositoryPort;
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
+import org.springframework.stereotype.Repository;
+
+@Repository
+@RequiredArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
+public class QuizRepositoryAdapter implements QuizRepositoryPort {
+    JpaQuizRepository jpaQuizRepository;
+    QuizMapper quizMapper;
+
+    @Override
+    public Quiz save(Quiz quiz) {
+        var quizEntity = quizMapper.toEntity(quiz);
+        var savedEntity = jpaQuizRepository.save(quizEntity);
+        return quizMapper.toDomain(savedEntity);
+    }
+}

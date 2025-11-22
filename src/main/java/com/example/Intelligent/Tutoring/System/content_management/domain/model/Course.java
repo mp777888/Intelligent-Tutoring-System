@@ -3,6 +3,9 @@ package com.example.Intelligent.Tutoring.System.content_management.domain.model;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
+import java.util.ArrayList;
+import java.util.List;
+
 
 @Setter
 @Getter
@@ -15,4 +18,6 @@ public class Course {
     String title;
     String description;
     String subject;
+    @Builder.Default
+    List<Quiz> quizzes = new ArrayList<>();;
 }

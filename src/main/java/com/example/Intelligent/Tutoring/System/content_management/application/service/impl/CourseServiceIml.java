@@ -1,7 +1,7 @@
 package com.example.Intelligent.Tutoring.System.content_management.application.service.impl;
 
 import com.example.Intelligent.Tutoring.System.content_management.domain.model.Course;
-import com.example.Intelligent.Tutoring.System.content_management.domain.port.in.CreateCourseUseCase;
+import com.example.Intelligent.Tutoring.System.content_management.domain.port.in.ICourseUseCase;
 import com.example.Intelligent.Tutoring.System.content_management.domain.port.out.CourseRepositoryPort;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service;
 @Slf4j
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class CreateCourseService implements CreateCourseUseCase {
+public class CourseServiceIml implements ICourseUseCase {
 
     final CourseRepositoryPort courseRepository;
 
@@ -45,5 +45,4 @@ public class CreateCourseService implements CreateCourseUseCase {
             throw new RuntimeException("Failed to find course with id: " + id, e);
         }
     }
-
 }
