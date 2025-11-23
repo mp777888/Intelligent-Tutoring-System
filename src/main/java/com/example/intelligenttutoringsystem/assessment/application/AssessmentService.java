@@ -6,19 +6,19 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.example.intelligenttutoringsystem.content.domain.Question;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.example.intelligenttutoringsystem.assessment.application.dto.AnswerDto;
 import com.example.intelligenttutoringsystem.assessment.application.dto.StartAssessmentRequest;
 import com.example.intelligenttutoringsystem.assessment.application.dto.SubmitAssessmentRequest;
 import com.example.intelligenttutoringsystem.assessment.domain.Assessment;
 import com.example.intelligenttutoringsystem.assessment.domain.Attempt;
 import com.example.intelligenttutoringsystem.assessment.domain.AttemptItem;
+import com.example.intelligenttutoringsystem.assessment.engine.IAssessmentEngine;
 import com.example.intelligenttutoringsystem.assessment.infrastructure.repository.AssessmentJpaRepository;
 import com.example.intelligenttutoringsystem.assessment.infrastructure.repository.AttemptJpaRepository;
 import com.example.intelligenttutoringsystem.content.application.QuestionService;
+import com.example.intelligenttutoringsystem.content.domain.Question;
 
 import lombok.RequiredArgsConstructor;
 
@@ -29,6 +29,7 @@ public class AssessmentService {
     private final AssessmentJpaRepository assessmentRepo;
     private final AttemptJpaRepository attemptRepo;
     private final QuestionService questionService;
+    private final IAssessmentEngine assessmentEngine;
 
     @Transactional
     public Map<String, Object> startAssessment(StartAssessmentRequest req) {
@@ -81,48 +82,14 @@ public class AssessmentService {
             throw new IllegalArgumentException("Assessment not found");
         }
 
-        double totalScore = 0.0;
+        var result = assessmentEngine.assess(req.studentId(), req.answers());
 
-        for (AttemptItem item : attempt.getItems()) {
-            AnswerDto ans = req.answers().stream()
-                    .filter(a -> a.questionId().equals(item.getQuestionId()))
-                    .findFirst()
-                    .orElse(null);
-
-            if (ans == null)
-                continue;
-
-            Question q = questionService.getQuestionsForAssessment(
-                    null, null, Integer.MAX_VALUE).stream().filter(qq -> qq.getId().equals(item.getQuestionId()))
-                    .findFirst()
-                    .orElse(null);
-
-            if (q == null)
-                continue;
-
-            item.setSelectedChoiceId(ans.selectedChoiceId());
-
-            boolean isCorrect = q.getChoices().stream()
-                    .anyMatch(c -> c.getId().equals(ans.selectedChoiceId()) && c.isCorrect());
-
-            double score = isCorrect ? 1.0 : 0.0;
-
-            item.setIsCorrect(isCorrect);
-            item.setScore(score);
-            item.setFeedback(isCorrect ? "Đúng rồi!" : "Sai, hãy xem lại kiến thức.");
-
-            totalScore += score;
-        }
-
-        attempt.setFinishedAt(Instant.now());
-        attempt.setTotalScore(totalScore);
-        attemptRepo.save(attempt);
-
-        Map<String, Object> result = new HashMap<>();
-        result.put("assessmentId", attempt.getAssessment().getId());
-        result.put("totalScore", attempt.getTotalScore());
-        result.put("maxScore", attempt.getMaxScore());
-        result.put("items", attempt.getItems());
-        return result;
+        Map<String, Object> resp = new HashMap<>();
+        resp.put("assessmentId", req.assessmentId());
+        resp.put("totalScore", result.totalScore());
+        resp.put("maxScore", result.maxScore());
+        resp.put("items", result.items());
+        resp.put("overallFeedback", result.overallFeedback());
+        return resp;
     }
 }

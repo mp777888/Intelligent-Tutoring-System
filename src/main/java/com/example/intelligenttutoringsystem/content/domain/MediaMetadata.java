@@ -1,4 +1,6 @@
-package com.example.intelligenttutoringsystem.assessment.domain;
+package com.example.intelligenttutoringsystem.content.domain;
+
+import java.time.Instant;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -16,28 +18,32 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Table(name = "assessment_attempt_items")
+@Table(name = "content_media_metadata")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class AttemptItem {
+public class MediaMetadata {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "attempt_id")
-    private Attempt attempt;
+    @JoinColumn(name = "lesson_id")
+    private Lesson lesson;
 
-    private String questionId;
-    private String selectedChoiceId;
+    private String filename;
+    private String mimeType;
+    private Long sizeBytes;
 
-    private Boolean isCorrect;
-    private Double score;
+    @Column(name = "storage_key")
+    private String storageKey;
 
-    @Column(columnDefinition = "TEXT")
-    private String feedback;
+    @Column(name = "public_url")
+    private String publicUrl;
+
+    @Column(name = "created_at")
+    private Instant createdAt;
 }
