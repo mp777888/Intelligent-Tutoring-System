@@ -1,4 +1,4 @@
-package com.example.Intelligent.Tutoring.System;
+package com.example.intelligenttutoringsystem;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
