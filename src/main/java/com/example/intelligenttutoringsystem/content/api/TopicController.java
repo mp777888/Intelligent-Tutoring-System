@@ -45,6 +45,11 @@ public class TopicController {
         return topicService.listTopics(page, size);
     }
 
+    @GetMapping("/by-course/{courseId}")
+    public List<Topic> getTopicsByCourse(@PathVariable String courseId) {
+        return topicService.getTopicsByCourse(courseId);
+    }
+
     @PutMapping("/{id}")
     public Topic update(@PathVariable String id, @RequestBody CreateTopicRequest req) {
         return topicService.updateTopic(id, req);
