@@ -3,10 +3,17 @@ package com.example.Intelligent.Tutoring.System.content_management.application.m
 import com.example.Intelligent.Tutoring.System.content_management.adapter.persistence.model.QuestionEntity;
 import com.example.Intelligent.Tutoring.System.content_management.application.dto.response.QuestionResponse;
 import com.example.Intelligent.Tutoring.System.content_management.domain.model.Question;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 @Component
 public class QuestionMapper {
+    private final QuizMapper quizMapper;
+
+    public QuestionMapper(@Lazy QuizMapper quizMapper) {
+        this.quizMapper = quizMapper;
+    }
+
     public QuestionResponse toResponse(Question question){
         return new QuestionResponse(
                 question.getId(),
@@ -22,6 +29,7 @@ public class QuestionMapper {
                 question.getId(),
                 question.getContent(),
                 question.getCorrectAnswer(),
+                question.getQuiz() == null ? null : quizMapper.toEntity(question.getQuiz()),
                 question.getOptions(),
                 question.getType()
         );
@@ -32,6 +40,7 @@ public class QuestionMapper {
                 questionEntity.getId(),
                 questionEntity.getContent(),
                 questionEntity.getCorrectAnswer(),
+                questionEntity.getQuiz() == null ? null : quizMapper.toDomainWithoutQuestions(questionEntity.getQuiz()),
                 questionEntity.getOptions(),
                 questionEntity.getType()
         );

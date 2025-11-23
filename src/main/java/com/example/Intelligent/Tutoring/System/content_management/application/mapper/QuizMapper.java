@@ -11,6 +11,7 @@ public class QuizMapper {
     private final QuestionMapper questionMapper;
     private final CourseMapper courseMapper;
 
+    // Constructor with @Lazy to prevent circular dependency
     public QuizMapper(QuestionMapper questionMapper, @Lazy CourseMapper courseMapper) {
         this.questionMapper = questionMapper;
         this.courseMapper = courseMapper;
@@ -61,6 +62,7 @@ public class QuizMapper {
         );
     }
 
+    // Method to convert QuizEntity to Quiz domain model without including the Course
     public Quiz toDomainWithoutCourse(QuizEntity quizEntity) {
         return new Quiz(
                 quizEntity.getId(),
@@ -71,6 +73,20 @@ public class QuizMapper {
                         quizEntity.getQuestions().stream()
                                 .map(questionMapper::toDomain)
                                 .toList(),
+                quizEntity.getCreatedAt(),
+                quizEntity.getClosedAt()
+        );
+    }
+
+    // convert QuizEntity to Quiz domain without mapping questions (prevents recursion)
+    public Quiz toDomainWithoutQuestions(QuizEntity quizEntity) {
+        if (quizEntity == null) return null;
+        return new Quiz(
+                quizEntity.getId(),
+                quizEntity.getTitle(),
+                quizEntity.getDescription(),
+                quizEntity.getCourse() == null ? null : courseMapper.toDomain(quizEntity.getCourse()),
+                new java.util.ArrayList<>(),
                 quizEntity.getCreatedAt(),
                 quizEntity.getClosedAt()
         );

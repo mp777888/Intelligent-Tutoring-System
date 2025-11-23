@@ -27,10 +27,22 @@ public class QuizRepositoryAdapter implements QuizRepositoryPort {
     }
 
     @Override
+    public Quiz getById(Long quizId) {
+        var quizEntity = jpaQuizRepository.findById(quizId)
+                .orElseThrow(() -> new IllegalArgumentException("Quiz not found with id: " + quizId));
+        return quizMapper.toDomain(quizEntity);
+    }
+
+    @Override
     public List<Quiz> findAllByCourseId(Long courseId) {
         var quizEntities = jpaQuizRepository.findAllByCourseId(courseId);
         return quizEntities.stream()
                 .map(quizMapper::toDomain)
                 .toList();
+    }
+
+    @Override
+    public Boolean exitstById(Long quizId) {
+        return jpaQuizRepository.existsById(quizId);
     }
 }

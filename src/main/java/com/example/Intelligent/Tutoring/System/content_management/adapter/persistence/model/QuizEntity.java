@@ -26,7 +26,7 @@ public class QuizEntity {
     @JoinColumn(name = "course_id")
     private CourseEntity course;
 
-    @OneToMany
+    @OneToMany(mappedBy = "quiz", cascade = CascadeType.ALL, orphanRemoval = true)
     List<QuestionEntity> questions;
     LocalDateTime createdAt;
     LocalDateTime closedAt;

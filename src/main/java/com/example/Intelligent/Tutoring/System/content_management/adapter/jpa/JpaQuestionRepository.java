@@ -4,6 +4,8 @@ import com.example.Intelligent.Tutoring.System.content_management.adapter.persis
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
 public interface JpaQuestionRepository extends JpaRepository<QuestionEntity, Long> {
 }

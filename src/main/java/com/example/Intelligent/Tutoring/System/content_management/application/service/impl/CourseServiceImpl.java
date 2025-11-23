@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service;
 @Slf4j
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class CourseServiceIml implements ICourseUseCase {
+public class CourseServiceImpl implements ICourseUseCase {
 
     final CourseRepositoryPort courseRepository;
 

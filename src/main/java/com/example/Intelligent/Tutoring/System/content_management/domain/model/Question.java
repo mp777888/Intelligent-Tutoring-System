@@ -17,6 +17,7 @@ public class Question {
     Long id;
     String content;
     String correctAnswer;
+    Quiz quiz;
     List<String> options;
     QuestionType type;
 }

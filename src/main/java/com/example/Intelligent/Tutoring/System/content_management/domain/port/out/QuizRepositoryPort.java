@@ -6,5 +6,7 @@ import java.util.List;
 
 public interface QuizRepositoryPort {
     Quiz save(Quiz quiz);
+    Quiz getById(Long quizId);
     List<Quiz> findAllByCourseId(Long courseId);
+    Boolean exitstById(Long quizId);
 }

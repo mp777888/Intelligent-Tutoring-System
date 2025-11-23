@@ -17,7 +17,7 @@ import java.util.List;
 @Slf4j
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class QuizServiceIml implements IQuizUseCase {
+public class QuizServiceImpl implements IQuizUseCase {
 
     final QuizRepositoryPort quizRepository;
     final CourseRepositoryPort courseRepository;

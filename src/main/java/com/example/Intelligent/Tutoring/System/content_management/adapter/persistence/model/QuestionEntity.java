@@ -20,6 +20,11 @@ public class QuestionEntity {
     Long id;
     String content;
     String correctAnswer;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "quiz_id")
+    QuizEntity quiz;
+
     @ElementCollection
     @CollectionTable(name = "question_options", joinColumns = @JoinColumn(name = "question_id"))
     @Column(name = "options")
