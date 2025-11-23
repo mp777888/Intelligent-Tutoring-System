@@ -44,8 +44,13 @@ public class TopicController {
     }
 
     @GetMapping
-    public List<TopicResponse> list(@RequestParam(defaultValue = "0") int page,
+    public List<TopicResponse> list(@RequestParam(required = false) String courseId,
+            @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "20") int size) {
+        if (courseId != null) {
+            var topics = topicService.getTopicsByCourse(courseId);
+            return topics.stream().map(contentMapper::toTopicResponse).toList();
+        }
         var topics = topicService.listTopics(page, size);
         return topics.stream().map(contentMapper::toTopicResponse).toList();
     }

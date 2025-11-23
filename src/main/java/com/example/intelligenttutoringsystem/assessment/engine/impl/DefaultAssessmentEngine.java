@@ -7,11 +7,9 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.example.intelligenttutoringsystem.assessment.application.StudentProfileService;
 import com.example.intelligenttutoringsystem.assessment.application.dto.AnswerDto;
 import com.example.intelligenttutoringsystem.assessment.domain.Attempt;
 import com.example.intelligenttutoringsystem.assessment.domain.AttemptItem;
-import com.example.intelligenttutoringsystem.assessment.domain.StudentProfile;
 import com.example.intelligenttutoringsystem.assessment.engine.AssessmentResult;
 import com.example.intelligenttutoringsystem.assessment.engine.IAssessmentEngine;
 import com.example.intelligenttutoringsystem.assessment.engine.IHintStrategy;
@@ -30,17 +28,13 @@ public class DefaultAssessmentEngine implements IAssessmentEngine {
     private final QuestionService questionService;
     private final IScoringStrategy scoringStrategy;
     private final IHintStrategy hintStrategy;
-    private final StudentProfileService profileService;
     private final AttemptJpaRepository attemptRepo;
     private final ApplicationEventPublisher eventPublisher;
 
     @Override
     @Transactional
-    public AssessmentResult assess(String studentId, List<AnswerDto> answers) {
-        StudentProfile profile = profileService.getOrCreate(studentId);
-
+    public AssessmentResult assess(List<AnswerDto> answers) {
         Attempt attempt = Attempt.builder()
-                .studentId(studentId)
                 .startedAt(Instant.now())
                 .totalScore(0.0)
                 .maxScore((double) answers.size())
@@ -58,7 +52,7 @@ public class DefaultAssessmentEngine implements IAssessmentEngine {
             boolean isCorrect = score > 0;
             item.setScore(score);
             item.setIsCorrect(isCorrect);
-            item.setFeedback(hintStrategy.generate(q, ans.selectedChoiceId(), profile));
+            item.setFeedback(hintStrategy.generate(q, ans.selectedChoiceId(), null));
             return item;
         }).toList();
 
@@ -68,18 +62,16 @@ public class DefaultAssessmentEngine implements IAssessmentEngine {
         attempt.setFinishedAt(Instant.now());
         attemptRepo.save(attempt);
 
-        profileService.updateAfterAttempt(profile, totalScore, items);
-
         AssessmentResult result = new AssessmentResult(
                 attempt.getId(),
-                studentId,
+                null,
                 totalScore,
                 attempt.getMaxScore(),
                 items,
                 generateOverallFeedback(totalScore, attempt.getMaxScore()),
                 Instant.now());
 
-        eventPublisher.publishEvent(new AssessmentSubmittedEvent(studentId, result, Instant.now()));
+        eventPublisher.publishEvent(new AssessmentSubmittedEvent(null, result, Instant.now()));
 
         return result;
     }

@@ -1,13 +1,11 @@
 package com.example.intelligenttutoringsystem.assessment.domain;
 
-import java.time.Instant;
-
-import io.swagger.v3.oas.annotations.media.Schema;
-
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -16,24 +14,23 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Table(name = "assessment_assessments")
-@Schema(description = "Assessment record")
+@Table(name = "assessment_quiz_questions")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Assessment {
+public class QuizQuestion {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
 
-    private String quizId;
+    @ManyToOne
+    @JoinColumn(name = "quiz_id")
+    private Quiz quiz;
 
-    private String topicId;
-
-    private Integer numQuestions;
-
-    private Instant createdAt;
+    @ManyToOne
+    @JoinColumn(name = "question_id")
+    private com.example.intelligenttutoringsystem.content.domain.Question question;
 }

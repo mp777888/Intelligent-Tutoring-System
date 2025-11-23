@@ -5,5 +5,5 @@ import java.util.List;
 import com.example.intelligenttutoringsystem.assessment.application.dto.AnswerDto;
 
 public interface IAssessmentEngine {
-    AssessmentResult assess(String studentId, List<AnswerDto> answers);
+    AssessmentResult assess(List<AnswerDto> answers);
 }

@@ -3,6 +3,8 @@ package com.example.intelligenttutoringsystem.assessment.domain;
 import java.time.Instant;
 import java.util.List;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -21,6 +23,7 @@ import lombok.Setter;
 
 @Entity
 @Table(name = "assessment_attempts")
+@Schema(description = "Assessment attempt record")
 @Getter
 @Setter
 @NoArgsConstructor
