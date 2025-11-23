@@ -18,7 +18,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.intelligenttutoringsystem.content.application.CourseService;
 import com.example.intelligenttutoringsystem.content.application.CreateCourseRequest;
 import com.example.intelligenttutoringsystem.content.application.UpdateCourseRequest;
-import com.example.intelligenttutoringsystem.content.domain.Course;
+import com.example.intelligenttutoringsystem.content.application.dto.ContentMapper;
+import com.example.intelligenttutoringsystem.content.application.dto.CourseResponse;
 
 import lombok.RequiredArgsConstructor;
 
@@ -28,27 +29,32 @@ import lombok.RequiredArgsConstructor;
 public class CourseController {
 
     private final CourseService courseService;
+    private final ContentMapper contentMapper;
 
     @PostMapping
-    public ResponseEntity<Course> create(@RequestBody CreateCourseRequest req) {
-        Course created = courseService.createCourse(req);
-        return ResponseEntity.status(HttpStatus.CREATED).body(created);
+    public ResponseEntity<CourseResponse> create(@RequestBody CreateCourseRequest req) {
+        var created = courseService.createCourse(req);
+        CourseResponse response = contentMapper.toCourseResponse(created);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
     @GetMapping("/{id}")
-    public Course get(@PathVariable String id) {
-        return courseService.getCourse(id);
+    public CourseResponse get(@PathVariable String id) {
+        var course = courseService.getCourse(id);
+        return contentMapper.toCourseResponse(course);
     }
 
     @GetMapping
-    public List<Course> list(@RequestParam(defaultValue = "0") int page,
+    public List<CourseResponse> list(@RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "20") int size) {
-        return courseService.listCourses(page, size);
+        var courses = courseService.listCourses(page, size);
+        return courses.stream().map(contentMapper::toCourseResponse).toList();
     }
 
     @PutMapping("/{id}")
-    public Course update(@PathVariable String id, @RequestBody UpdateCourseRequest req) {
-        return courseService.updateCourse(id, req);
+    public CourseResponse update(@PathVariable String id, @RequestBody UpdateCourseRequest req) {
+        var updated = courseService.updateCourse(id, req);
+        return contentMapper.toCourseResponse(updated);
     }
 
     @DeleteMapping("/{id}")

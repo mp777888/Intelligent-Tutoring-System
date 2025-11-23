@@ -3,14 +3,13 @@ package com.example.intelligenttutoringsystem.content.application;
 import java.time.Instant;
 import java.util.List;
 
-import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.example.intelligenttutoringsystem.content.domain.Topic;
 import com.example.intelligenttutoringsystem.content.domain.Course;
-import com.example.intelligenttutoringsystem.content.infrastructure.repository.TopicJpaRepository;
+import com.example.intelligenttutoringsystem.content.domain.Topic;
 import com.example.intelligenttutoringsystem.content.infrastructure.repository.CourseJpaRepository;
+import com.example.intelligenttutoringsystem.content.infrastructure.repository.TopicJpaRepository;
 
 import lombok.RequiredArgsConstructor;
 
@@ -22,14 +21,14 @@ public class TopicService {
     private final CourseJpaRepository courseRepo;
 
     @Transactional
-    public Topic createTopic(@NonNull CreateTopicRequest dto) {
+    public Topic createTopic(CreateTopicRequest dto) {
         if (dto.courseId() == null) {
             throw new IllegalArgumentException("Course ID cannot be null");
         }
-        
+
         Course course = courseRepo.findById(dto.courseId())
                 .orElseThrow(() -> new IllegalArgumentException("Course not found"));
-        
+
         Topic topic = Topic.builder()
                 .name(dto.name())
                 .description(dto.description())
@@ -41,7 +40,7 @@ public class TopicService {
     }
 
     @Transactional(readOnly = true)
-    public Topic getTopic(@NonNull String id) {
+    public Topic getTopic(String id) {
         return topicRepo.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Topic not found"));
     }
@@ -61,13 +60,13 @@ public class TopicService {
         Topic topic = getTopic(id);
         topic.setName(dto.name());
         topic.setDescription(dto.description());
-        
+
         if (dto.courseId() != null && !dto.courseId().equals(topic.getCourse().getId())) {
             Course newCourse = courseRepo.findById(dto.courseId())
                     .orElseThrow(() -> new IllegalArgumentException("Course not found"));
             topic.setCourse(newCourse);
         }
-        
+
         topic.setUpdatedAt(Instant.now());
         return topicRepo.save(topic);
     }

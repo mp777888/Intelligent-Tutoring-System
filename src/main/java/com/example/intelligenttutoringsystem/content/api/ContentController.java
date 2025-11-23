@@ -17,7 +17,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.intelligenttutoringsystem.content.application.CreateQuestionRequest;
 import com.example.intelligenttutoringsystem.content.application.QuestionService;
 import com.example.intelligenttutoringsystem.content.application.UpdateQuestionRequest;
-import com.example.intelligenttutoringsystem.content.domain.Question;
+import com.example.intelligenttutoringsystem.content.application.dto.ContentMapper;
+import com.example.intelligenttutoringsystem.content.application.dto.QuestionResponse;
 
 import lombok.RequiredArgsConstructor;
 
@@ -27,20 +28,24 @@ import lombok.RequiredArgsConstructor;
 public class ContentController {
 
     private final QuestionService questionService;
+    private final ContentMapper contentMapper;
 
     @PostMapping("/questions")
-    public Question createQuestion(@RequestBody CreateQuestionRequest request) {
-        return questionService.createQuestion(request);
+    public QuestionResponse createQuestion(@RequestBody CreateQuestionRequest request) {
+        var created = questionService.createQuestion(request);
+        return contentMapper.toQuestionResponse(created);
     }
 
     @GetMapping("/questions/{id}")
-    public Question getQuestion(@PathVariable String id) {
-        return questionService.getQuestion(id);
+    public QuestionResponse getQuestion(@PathVariable String id) {
+        var question = questionService.getQuestion(id);
+        return contentMapper.toQuestionResponse(question);
     }
 
     @PutMapping("/questions/{id}")
-    public Question updateQuestion(@PathVariable String id, @RequestBody UpdateQuestionRequest req) {
-        return questionService.updateQuestion(id, req);
+    public QuestionResponse updateQuestion(@PathVariable String id, @RequestBody UpdateQuestionRequest req) {
+        var updated = questionService.updateQuestion(id, req);
+        return contentMapper.toQuestionResponse(updated);
     }
 
     @DeleteMapping("/questions/{id}")
@@ -50,15 +55,17 @@ public class ContentController {
     }
 
     @GetMapping("/questions")
-    public List<Question> getQuestions(
+    public List<QuestionResponse> getQuestions(
             @RequestParam(required = false) String topicId,
             @RequestParam(required = false) Integer difficulty,
             @RequestParam(required = false) Integer limit,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "20") int size) {
         if (topicId != null || difficulty != null || limit != null) {
-            return questionService.getQuestionsForAssessment(topicId, difficulty, limit != null ? limit : 100);
+            var questions = questionService.getQuestionsForAssessment(topicId, difficulty, limit != null ? limit : 100);
+            return questions.stream().map(contentMapper::toQuestionResponse).toList();
         }
-        return questionService.listQuestions(page, size);
+        var questions = questionService.listQuestions(page, size);
+        return questions.stream().map(contentMapper::toQuestionResponse).toList();
     }
 }

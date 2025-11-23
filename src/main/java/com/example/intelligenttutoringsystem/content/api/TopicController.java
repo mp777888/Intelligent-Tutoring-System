@@ -17,7 +17,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.intelligenttutoringsystem.content.application.CreateTopicRequest;
 import com.example.intelligenttutoringsystem.content.application.TopicService;
-import com.example.intelligenttutoringsystem.content.domain.Topic;
+import com.example.intelligenttutoringsystem.content.application.dto.ContentMapper;
+import com.example.intelligenttutoringsystem.content.application.dto.TopicResponse;
 
 import lombok.RequiredArgsConstructor;
 
@@ -27,32 +28,38 @@ import lombok.RequiredArgsConstructor;
 public class TopicController {
 
     private final TopicService topicService;
+    private final ContentMapper contentMapper;
 
     @PostMapping
-    public ResponseEntity<Topic> create(@RequestBody CreateTopicRequest req) {
-        Topic created = topicService.createTopic(req);
-        return ResponseEntity.status(HttpStatus.CREATED).body(created);
+    public ResponseEntity<TopicResponse> create(@RequestBody CreateTopicRequest req) {
+        var created = topicService.createTopic(req);
+        TopicResponse response = contentMapper.toTopicResponse(created);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
     @GetMapping("/{id}")
-    public Topic get(@PathVariable String id) {
-        return topicService.getTopic(id);
+    public TopicResponse get(@PathVariable String id) {
+        var topic = topicService.getTopic(id);
+        return contentMapper.toTopicResponse(topic);
     }
 
     @GetMapping
-    public List<Topic> list(@RequestParam(defaultValue = "0") int page,
+    public List<TopicResponse> list(@RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "20") int size) {
-        return topicService.listTopics(page, size);
+        var topics = topicService.listTopics(page, size);
+        return topics.stream().map(contentMapper::toTopicResponse).toList();
     }
 
     @GetMapping("/by-course/{courseId}")
-    public List<Topic> getTopicsByCourse(@PathVariable String courseId) {
-        return topicService.getTopicsByCourse(courseId);
+    public List<TopicResponse> getTopicsByCourse(@PathVariable String courseId) {
+        var topics = topicService.getTopicsByCourse(courseId);
+        return topics.stream().map(contentMapper::toTopicResponse).toList();
     }
 
     @PutMapping("/{id}")
-    public Topic update(@PathVariable String id, @RequestBody CreateTopicRequest req) {
-        return topicService.updateTopic(id, req);
+    public TopicResponse update(@PathVariable String id, @RequestBody CreateTopicRequest req) {
+        var updated = topicService.updateTopic(id, req);
+        return contentMapper.toTopicResponse(updated);
     }
 
     @DeleteMapping("/{id}")
